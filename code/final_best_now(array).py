@@ -17,7 +17,7 @@ N_STATES = 3
 STATE=[1900,2800,3700]
 remain_shares=100
 ACTIONS = np.arange(0,remain_shares+1,1)     # 探索者的可用動作
-EPSILON = 0.9   # 貪焚度 greedy
+EPSILON = 0.9   # 貪婪度 greedy
 ALPHA = 0.01     # 學習率
 GAMMA = 0.9    # 獎勵遞減 discount rate
 MAX_EPISODES = 21210000   # 最大回合數
@@ -40,7 +40,7 @@ def choose_action(state, q_table, remain_shares):
     state_actions = q_table[state, range(remain_shares+1)]  # 選出這個 state下的所有 action 值
     index = (state_actions==0)
     actions=np.arange(0,remain_shares+1,1)
-    if (np.random.uniform() > EPSILON) or (sum(index) == len(state_actions)):  # 非貪焚或是這個 state 還没有探索過
+    if (np.random.uniform() > EPSILON) or (sum(index) == len(state_actions)):  # 非貪婪或是這個 state 還没有探索過
         action_name = np.random.choice(actions)
     else:
         action_name = state_actions.argmax()    #貪婪模式
