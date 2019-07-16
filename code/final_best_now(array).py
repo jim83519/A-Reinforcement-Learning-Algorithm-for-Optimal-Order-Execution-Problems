@@ -13,14 +13,14 @@ import time
 begin=time.time()
 np.random.seed(1)
 
-N_STATES = 3   # 1维世界的宽度
+N_STATES = 3
 STATE=[1900,2800,3700]
 remain_shares=100
-ACTIONS = np.arange(0,remain_shares+1,1)     # 探索者的可用动作
-EPSILON = 0.9   # 贪婪度 greedy
-ALPHA = 0.01     # 学习率
-GAMMA = 0.9    # 奖励递减值,就是discount rate
-MAX_EPISODES = 21210000   # 最大回合数
+ACTIONS = np.arange(0,remain_shares+1,1)     # 探索者的可用動作
+EPSILON = 0.9   # 貪焚度 greedy
+ALPHA = 0.01     # 學習率
+GAMMA = 0.9    # 獎勵遞減 discount rate
+MAX_EPISODES = 21210000   # 最大回合數
 DELTA_T=1/(N_STATES-1)
 RHO=3.8
 SPREAD=0.02
@@ -29,21 +29,21 @@ transition_prob=[[0.85,0.1375,0.0125],[0.1392405,0.6075949,0.2531646],[0,0.2625,
 def build_q_table(n_states, actions):
     table = pd.DataFrame(
         np.zeros((n_states, len(actions))),     # q_table 全 0 初始
-        columns=actions,    # columns 对应的是行为名称
+        columns=actions,    # columns 對應行為名稱
     )
     return table
 
       
 
-# 在某个 state 地点, 选择行为
+# 在某個state選擇action
 def choose_action(state, q_table, remain_shares):
-    state_actions = q_table[state, range(remain_shares+1)]  # 选出这个 state 的所有 action 值
+    state_actions = q_table[state, range(remain_shares+1)]  # 選出這個 state下的所有 action 值
     index = (state_actions==0)
     actions=np.arange(0,remain_shares+1,1)
-    if (np.random.uniform() > EPSILON) or (sum(index) == len(state_actions)):  # 非贪婪 or 或者这个 state 还没有探索过
+    if (np.random.uniform() > EPSILON) or (sum(index) == len(state_actions)):  # 非貪焚或是這個 state 還没有探索過
         action_name = np.random.choice(actions)
     else:
-        action_name = state_actions.argmax()    # 贪婪模式
+        action_name = state_actions.argmax()    #貪婪模式
     return action_name
 
 def get_env_feedback(S, A, D, state):
@@ -100,15 +100,15 @@ def rl():
         S_, R_2, spread= get_env_feedback(S, A_2, spread, state)
         
         
-        q_predict = q_table_0[S_index_0, A_0]    # 估算的(状态-行为)值
+        q_predict = q_table_0[S_index_0, A_0]    # 估算的(状態-行為)值
         q_target = R_0 + GAMMA * q_table_1[S_index_1, A_1] + GAMMA * GAMMA * q_table_2[S_index_2, A_2]
         q_table_0[S_index_0, A_0] += ALPHA * (q_target - q_predict)
         
-        q_predict = q_table_1[S_index_1, A_1]    # 估算的(状态-行为)值
+        q_predict = q_table_1[S_index_1, A_1]    # 估算的(状態-行為)值
         q_target = R_1 + GAMMA * q_table_2[S_index_2, A_2]
         q_table_1[S_index_1, A_1] += ALPHA * (q_target - q_predict)
         
-        q_predict = q_table_2[S_index_2, A_2]    # 估算的(状态-行为)值
+        q_predict = q_table_2[S_index_2, A_2]    # 估算的(状態-行為)值
         q_target = R_2
         q_table_2[S_index_2, A_2] += ALPHA * (q_target - q_predict)
         
